@@ -16,15 +16,16 @@ int fontHeight;
 PImage splashScreen;
 boolean splash;
 float splashend;
-int filtro=7;
+int filtro=8;
 int prevfiltro=0;
-int numfiltros=8;
+int numfiltros=9;
 String cfiltro[]={
    "Rojo×Azul",
    "Rojo×Verde", 
    "Azul×Verde",
    "RojVerAz->AzRojVer",
    "RojVerAz->VerAzRoj",
+   "RojoBrilla",
    "DobleRojo",
    "ColorPlano",
    "Natural"
@@ -32,15 +33,13 @@ String cfiltro[]={
    
    
 void setup() {
-  
-  //splashScreen=loadImage ("Daltonaid_splash_2650x1600.jpg");
-  splash=true;
-  splashend=millis() + 5000;
   orientation(LANDSCAPE);
-  imageMode(CENTER);
-  
-  cam = new KetaiCamera(this,1280,720 /* width, height*/, 24);
+  fullScreen();
   frameRate  (25);
+  //splashScreen=loadImage ("Daltonaid_splash_2650x1600.jpg");
+  cam = new KetaiCamera(this,min(width,1024),min(height,768), 24);
+  foto=createImage(min(width,1024),min(height,768),ARGB);
+  imageMode(CENTER);
   fontHeight= height/20;
   tipografia=createFont ("SansSerif", fontHeight );
   textFont (tipografia);
@@ -53,6 +52,8 @@ void setup() {
   createIcon (48,48);
   createIcon (128,128);
   */
+  splash=true;
+  splashend=millis() + 5000;
 }
 
 void draw (){
@@ -208,10 +209,13 @@ void drawUI(){
   //background  (128,128,128 );
   fill (0);
   if (cam !=null && cam.isStarted()){
-      
-     foto= cam.get ();
+    image (cam,width/2, height/2,width,height);
+  } 
+  if (cam!=null){
+     foto= cam.get(0,0,cam.width,cam.height);
+  
      applyFilters();
-     image (foto,width/2, height/2);
+     image (foto,width/2, height/2,width,height);
   }
   
   /* Gui */
@@ -224,14 +228,24 @@ void drawUI(){
   } else {
    text("Clic en imagen para detener cámara" , width/2, fontHeight);
   }
-  
-  text ("Filtro: " + cfiltro[filtro]+" (cambiar)", width/2,height- (fontHeight+4)/2);
+  fill(180);
+  textAlign(LEFT);
+  text (cfiltro[(filtro+numfiltros-1)%numfiltros], 5,height- (fontHeight+4)/2);
+  textAlign(RIGHT);
+  text (cfiltro[(filtro+1)%numfiltros], width-5,height- (fontHeight+4)/2);
+  textAlign(CENTER);
+  fill(255);
+  text (cfiltro[filtro], width/2,height- (fontHeight+4)/2);
   
 }
 
 void onCameraPreviewEvent()
 { 
+  //println("ready");
   cam.read();
+  //foto= cam.get();
+    //applyFilters();
+     //image (foto,width/2, height/2,width,height);
 }
 
 void applyFilters(){
@@ -250,11 +264,13 @@ void applyFilters(){
      break;
     case 4: greenbluered();
      break;
-    case 5: morered();
+     case 5: redbright();
      break;
-    case 6: plaincolors();
+    case 6: morered();
      break;
-    case 7: 
+    case 7: plaincolors();
+     break;
+    case 8: 
     default:
        nofilter ();
    }
@@ -287,22 +303,32 @@ void mousePressed()
     return;
   }
   if (mouseY>=( height-2*(fontHeight+4))){
-    filtro=(filtro+1) % numfiltros;
+    if(mouseX>width/2){
+      filtro=(filtro+1) % numfiltros;
+    } else if(mouseX<width/2){
+      filtro=(filtro+numfiltros-1) % numfiltros;
+    }
+    
     return;
   }
   if (cam.isStarted()) {
+    println("cam.stop()");
       cam.stop();
+      
   } else {
       if (!hasPermission("android.permission.CAMERA") ){
-         requestPermission("android.permission.CAMERA", "onPermissionResult");
+         requestPermission("android.permission.CAMERA", "PermissionRes");
       } else {
+        println("cam.start from mousepressed");
         cam.start();
+        
         cam.autoSettings();
       }
   }
 }
-void onPermissionResult(boolean granted){
+void PermissionRes(boolean granted){
   if (granted){
+    println("cam.start from PermissionRes");
     cam.start();
     cam.autoSettings();
   } else {
@@ -346,6 +372,51 @@ void redtoblue (){
   foto.updatePixels ();
   
 }
+void redbrightold (){
+  int pcount=foto.height*foto.width;
+  foto.loadPixels ();
+  for (int i=0; i<pcount; i++){
+    color argb= foto.pixels [i];
+    
+    int a = (argb >> 24) & 0xFF;
+    int r = (argb >> 16) & 0xFF;  // Faster way of getting red(argb)
+    int g = (argb >> 8) & 0xFF;   // Faster way of getting green(argb)
+    int b = argb & 0xFF; 
+    if (r>0x80) {
+      r=min(255,r*2);
+      g=min(255,g*2);
+      b=min(255,b*2);
+      foto.pixels [i]=r
+        | (g <<8) 
+        | (b <<16) |0xFF000000;
+      }
+  }
+  foto.updatePixels ();
+  
+}
+void redbright (){
+  int pcount=foto.height*foto.width;
+  foto.loadPixels ();
+  for (int i=0; i<pcount; i++){
+    color argb= foto.pixels [i];
+    
+    int a = (argb >> 24) & 0xFF;
+    int r = (argb >> 16) & 0xFF;  // Faster way of getting red(argb)
+    int g = (argb >> 8) & 0xFF;   // Faster way of getting green(argb)
+    int b = argb & 0xFF; 
+     int increase=(r>>1);
+      r=min(255,r+increase);
+      g=min(255,g+increase);
+      b=min(255,b+increase);
+      foto.pixels [i]=(r<<16)
+        | (g <<8) 
+        | (b ) |0xFF000000;
+      
+  }
+  foto.updatePixels ();
+  
+}
+
 
 void redtogreen (){
   int pcount=foto.height*foto.width;
