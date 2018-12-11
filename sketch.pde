@@ -4,32 +4,42 @@
  * <p>Daltonaid</p>
  * <p>Updated: 2015-01-06 José G Moya Y.</p>
  */
-PFont tipografia;
+
 import ketai.camera.*;
-PImage foto;
-int filtro=0;
-int numfiltros=5;
+
 KetaiCamera cam;
+
+PImage foto;
 boolean camReady;
+PFont tipografia;
 int fontHeight;
+PImage splashScreen;
 boolean splash;
 float splashend;
+int filtro=7;
+int prevfiltro=0;
+int numfiltros=8;
 String cfiltro[]={
    "Rojo×Azul",
    "Rojo×Verde", 
    "Azul×Verde",
    "RojVerAz->AzRojVer",
-   "RojVerAz- >VerAzRoj",
-   "Natural"};
-   PImage splashScreen;
+   "RojVerAz->VerAzRoj",
+   "DobleRojo",
+   "ColorPlano",
+   "Natural"
+   };
+   
+   
 void setup() {
-  filtro=0;
+  
   //splashScreen=loadImage ("Daltonaid_splash_2650x1600.jpg");
   splash=true;
   splashend=millis() + 5000;
   orientation(LANDSCAPE);
   imageMode(CENTER);
-  cam = new KetaiCamera(this, width, height, 25);
+  
+  cam = new KetaiCamera(this,1280,720 /* width, height*/, 24);
   frameRate  (25);
   fontHeight= height/20;
   tipografia=createFont ("SansSerif", fontHeight );
@@ -47,22 +57,21 @@ void setup() {
 
 void draw (){
   if (splash){ 
-    draw1 ();
+    drawSplashScreen();
     if (millis()>splashend){
       splash=false;
       pushStyle ();
       fill (64,64,64,128);
       rect(0,0,width,height);
       popStyle ();
-      frameRate ( 10);
     }
   }else {
-    draw2 ();
+    drawUI ();
   }
 }
 
 
-void draw1 (){
+void drawSplashScreen (){
   if (frameCount<=1){
     createLogo ();
   }
@@ -72,7 +81,7 @@ void draw1 (){
     tint (255,255,255,(10*frameCount));
     image (BigLogo,width/2,height/2);
     noTint ();
-  } else{
+  } else {
     background (200,200,200);
     if (frameCount>100){
       tint (255,255,255,lerp (255, 100,( frameCount-100)/25));
@@ -84,117 +93,128 @@ void draw1 (){
     }
   }
 }
+
 PGraphics BigLogo;
 void createLogo (){
-    PGraphics pg,pg2;
+  PGraphics pg,pg2;
   //image (splashScreen,width/2,height/2, width, height);
-pushStyle ();
-pg=createGraphics (width/2,height);
-pg2=createGraphics (width/2,height);
-BigLogo=createGraphics (width,height);
-  pg.beginDraw ();
-  pg.background (200,200,200,0);
-  pg.stroke (color (255,255,255));
-  pg.strokeWeight(4);
-  pg.ellipseMode (CENTER);
-  pg.fill (color (0,0,255));
-  pg.ellipse (width/2,height/2,height/2-10,height/2-10);
-  
-  pg.textSize (height/4);
-  float tf=pg.textAscent () +pg.textDescent ();
-  pg.textAlign (RIGHT);
-  pg.fill (color (200,0,0));
-  pg.text ("á ",width/2,(height+tf)/2);
-  pg.fill (color (0,0,0));
-  pg.text ("a ",width/2,(height+tf)/2);
-  pg.endDraw ();
-  pg2.beginDraw ();
-  pg2.background (200,200,200,0);
-  pg2.strokeWeight(4);
-  pg2.stroke (color (255,255,255));
-  pg2.ellipseMode (CENTER);
-  pg2.fill (color (255,0,0));
-  pg2.ellipse (0,height/2,height/2-10,height/2-10);
-  pg2.textSize (height/4);
-  tf=pg2.textAscent () +pg.textDescent ();
-  pg2.textAlign  (LEFT);
-  pg2.fill (color (0,0,200));
-  pg2.text (" á", 0,(height+tf)/2);
-  pg2.fill (0);
-  pg2.text (" a", 0,(height+tf)/2);
-  pg2.textAlign (CENTER );
-  pg2.endDraw ();
-  BigLogo.beginDraw ();
-  BigLogo.textAlign (CENTER); 
-  BigLogo.imageMode (CENTER);
-  BigLogo.image (pg,width/4, height/2);
-  BigLogo.image (pg2,width*0.75, height/2);
-  BigLogo.textSize (height/4);
-  BigLogo.fill (255,255,255, 255);
-  BigLogo.text (">",width/2, (height+tf)/2);
-  BigLogo.text ("daltonaid",width/2,height-10);
-  BigLogo.endDraw ();
-popStyle ();
+  pushStyle ();
+  pg=createGraphics (width/2,height);
+  pg2=createGraphics (width/2,height);
+  BigLogo=createGraphics (width,height);
+    pg.beginDraw ();
+    pg.background (200,200,200,0);
+    pg.stroke (color (255,255,255));
+    pg.strokeWeight(4);
+    pg.ellipseMode (CENTER);
+    pg.fill (color (0,0,255));
+    pg.ellipse (width/2,height/2,height/2-10,height/2-10);
+    
+    pg.textSize (height/4);
+    float tf=pg.textAscent () +pg.textDescent ();
+    pg.textAlign (RIGHT);
+    pg.fill (color (200,0,0));
+    pg.text ("á ",width/2,(height+tf)/2);
+    pg.fill (color (0,0,0));
+    pg.text ("a ",width/2,(height+tf)/2);
+    pg.endDraw ();
+    pg2.beginDraw ();
+    pg2.background (200,200,200,0);
+    pg2.strokeWeight(4);
+    pg2.stroke (color (255,255,255));
+    pg2.ellipseMode (CENTER);
+    pg2.fill (color (255,0,0));
+    pg2.ellipse (0,height/2,height/2-10,height/2-10);
+    pg2.textSize (height/4);
+    tf=pg2.textAscent () +pg.textDescent ();
+    pg2.textAlign  (LEFT);
+    pg2.fill (color (0,0,200));
+    pg2.text (" á", 0,(height+tf)/2);
+    pg2.fill (0);
+    pg2.text (" a", 0,(height+tf)/2);
+    pg2.textAlign (CENTER );
+    pg2.endDraw ();
+    BigLogo.beginDraw ();
+    BigLogo.textAlign (CENTER); 
+    BigLogo.imageMode (CENTER);
+    BigLogo.image (pg,width/4, height/2);
+    BigLogo.image (pg2,width*0.75, height/2);
+    BigLogo.textSize (height/4);
+    BigLogo.fill (255,255,255, 255);
+    BigLogo.text (">",width/2, (height+tf)/2);
+    BigLogo.text ("daltonaid",width/2,height-10);
+    BigLogo.endDraw ();
+  popStyle ();
 
 }
+
 void createIcon(int w,int h){
     PGraphics pg,pg2;
     PGraphics Icono;
   //image (splashScreen,w/2,h/2, w, h);
-pushStyle ();
-pg=createGraphics (w/2,h);
-pg2=createGraphics (w/2,h);
-Icono=createGraphics (w,h);
-  pg.beginDraw ();
-  pg.background (200,200,200,0);
-  pg.stroke (color (255,255,255));
-  pg.strokeWeight(4);
-  pg.ellipseMode (CENTER);
-  pg.fill (color (0,0,255));
-  pg.ellipse (w/2,h/2,h/2-1,h/2-1);
+  pushStyle ();
+  pg=createGraphics (w/2,h);
+  pg2=createGraphics (w/2,h);
+  Icono=createGraphics (w,h);
+    pg.beginDraw ();
+    pg.background (200,200,200,0);
+    pg.stroke (color (255,255,255));
+    pg.strokeWeight(4);
+    pg.ellipseMode (CENTER);
+    pg.fill (color (0,0,255));
+    pg.ellipse (w/2,h/2,h/2-1,h/2-1);
+    
+    pg.textSize (h/4);
+    float tf=pg.textAscent () +pg.textDescent ();
+    pg.textAlign (RIGHT);
+    pg.fill (color (200,0,0));
+    pg.text ("á ",w/2,(h+tf)/2);
+    pg.fill (color (0,0,0));
+    pg.text ("a ",w/2,(h+tf)/2);
+    pg.endDraw ();
+    pg2.beginDraw ();
+    pg2.background (200,200,200,0);
+    pg2.strokeWeight(4);
+    pg2.stroke (color (255,255,255));
+    pg2.ellipseMode (CENTER);
+    pg2.fill (color (255,0,0));
+    pg2.ellipse (0,h/2,h/2-1,h/2-1);
+    pg2.textSize (h/4);
+    tf=pg2.textAscent () +pg.textDescent ();
+    pg2.textAlign  (LEFT);
+    pg2.fill (color (0,0,200));
+    pg2.text (" á", 0,(h+tf)/2);
+    pg2.fill (0);
+    pg2.text (" a", 0,(height+tf)/2);
+    pg2.textAlign (CENTER );
+    pg2.endDraw ();
+    Icono.beginDraw ();
+    Icono.textAlign (CENTER); 
+    Icono.imageMode (CENTER);
+    Icono.image (pg,w/4, h/2);
+    Icono.image (pg2,w*0.75, h/2);
+    Icono.textSize (h/4);
+    Icono.fill (255,255,255, 255);
+    Icono.text (">",w/2, (h+tf)/2);
+    Icono.endDraw ();
+  popStyle ();
+  /* You could need change permissions for this to work */
+  Icono.save ("/sdcard/Daltonaid-Icono-"+str (w)+"x"+str (h)+".png");
   
-  pg.textSize (h/4);
-  float tf=pg.textAscent () +pg.textDescent ();
-  pg.textAlign (RIGHT);
-  pg.fill (color (200,0,0));
-  pg.text ("á ",w/2,(h+tf)/2);
-  pg.fill (color (0,0,0));
-  pg.text ("a ",w/2,(h+tf)/2);
-  pg.endDraw ();
-  pg2.beginDraw ();
-  pg2.background (200,200,200,0);
-  pg2.strokeWeight(4);
-  pg2.stroke (color (255,255,255));
-  pg2.ellipseMode (CENTER);
-  pg2.fill (color (255,0,0));
-  pg2.ellipse (0,h/2,h/2-1,h/2-1);
-  pg2.textSize (h/4);
-  tf=pg2.textAscent () +pg.textDescent ();
-  pg2.textAlign  (LEFT);
-  pg2.fill (color (0,0,200));
-  pg2.text (" á", 0,(h+tf)/2);
-  pg2.fill (0);
-  pg2.text (" a", 0,(height+tf)/2);
-  pg2.textAlign (CENTER );
-  pg2.endDraw ();
-  Icono.beginDraw ();
-  Icono.textAlign (CENTER); 
-  Icono.imageMode (CENTER);
-  Icono.image (pg,w/4, h/2);
-  Icono.image (pg2,w*0.75, h/2);
-  Icono.textSize (h/4);
-  Icono.fill (255,255,255, 255);
-  Icono.text (">",w/2, (h+tf)/2);
-  Icono.endDraw ();
-popStyle ();
-Icono.save ("/sdcard/Daltonaid-Icono-"+str (w)+"x"+str (h)+".png");
-
 }
 
-void draw2(){
+void drawUI(){
   
   //background  (128,128,128 );
   fill (0);
+  if (cam !=null && cam.isStarted()){
+      
+     foto= cam.get ();
+     applyFilters();
+     image (foto,width/2, height/2);
+  }
+  
+  /* Gui */
   rect (0,0, width,fontHeight);
   rect (0,height-2*(fontHeight+4),width,height);
   
@@ -206,16 +226,19 @@ void draw2(){
   }
   
   text ("Filtro: " + cfiltro[filtro]+" (cambiar)", width/2,height- (fontHeight+4)/2);
-  if (camReady && cam.isStarted ()){
-     // image(foto, width/2, height/2);
-  }
+  
 }
 
 void onCameraPreviewEvent()
 { 
-  //if (camReady) {
   cam.read();
+}
+
+void applyFilters(){
+  //if (camReady) {
+  //camReady=false;
   //cam.pause ();
+  float t=millis();
   switch (filtro){
     case 0: redtoblue ();
       break;
@@ -225,16 +248,30 @@ void onCameraPreviewEvent()
      break;
     case 3: blueredgreen ();
      break;
-     case 4: greenbluered();
+    case 4: greenbluered();
      break;
-    case 5: 
+    case 5: morered();
+     break;
+    case 6: plaincolors();
+     break;
+    case 7: 
     default:
        nofilter ();
-    
+   }
+   if (prevfiltro!=filtro){
+    prevfiltro=filtro;
+    println ("delay "+
+      cfiltro[filtro] +":"+
+      nf((millis()-t),5,3)+
+      "ms"
+    );
+  //
   }
- 
-  //cam.resume ();
+   // cam.resume ();
+  camReady=true;
   //}
+  
+  
 }
 
 // start/stop camera preview by tapping the screen
@@ -246,7 +283,7 @@ void mousePressed()
     fill (64,64,64,128);
     rect (0,0,width,height);
     popStyle ();
-    frameRate ( 10);
+    frameRate ( 25);
     return;
   }
   if (mouseY>=( height-2*(fontHeight+4))){
@@ -256,9 +293,23 @@ void mousePressed()
   if (cam.isStarted()) {
       cam.stop();
   } else {
-      cam.start();
+      if (!hasPermission("android.permission.CAMERA") ){
+         requestPermission("android.permission.CAMERA", "onPermissionResult");
+      } else {
+        cam.start();
+        cam.autoSettings();
+      }
   }
 }
+void onPermissionResult(boolean granted){
+  if (granted){
+    cam.start();
+    cam.autoSettings();
+  } else {
+    println("No permission");
+  }
+}
+
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == MENU) {
@@ -269,10 +320,10 @@ void keyPressed() {
     }
   }
 }
+
+
 void redtoblue (){
-  foto= cam.get ();
   int pcount=foto.height*foto.width;
-  camReady=false;
   foto.loadPixels ();
   for (int i=0; i<pcount; i++){
     color argb= foto.pixels [i];
@@ -293,15 +344,11 @@ void redtoblue (){
         );
   }
   foto.updatePixels ();
-  camReady=true;
-  image (foto,width/2, height/2);
-  redraw ();
+  
 }
 
 void redtogreen (){
-  foto= cam.get ();
   int pcount=foto.height*foto.width;
-  camReady=false;
   foto.loadPixels ();
   for (int i=0; i<pcount; i++){
     color argb= foto.pixels [i];
@@ -325,14 +372,9 @@ void redtogreen (){
    */
   }
   foto.updatePixels ();
-  camReady=true;
-  image (foto,width/2, height/2);
-  redraw ();
 }
 void bluetogreen (){
-  foto= cam.get ();
   int pcount=foto.height*foto.width;
-  camReady=false;
   foto.loadPixels ();
   for (int i=0; i<pcount; i++){
     color argb= foto.pixels [i];
@@ -352,15 +394,10 @@ void bluetogreen (){
         
   }
   foto.updatePixels ();
-  camReady=true;
-  image (foto,width/2, height/2);
-  redraw ();
 }
 
 void blueredgreen (){
-  foto= cam.get ();
   int pcount=foto.height*foto.width;
-  camReady=false;
   foto.loadPixels ();
   for (int i=0; i<pcount; i++){
     color argb= foto.pixels [i];
@@ -368,8 +405,7 @@ void blueredgreen (){
     int r = (argb >> 16) & 0xFF;  // Faster way of getting red(argb)
     int g = (argb >> 8) & 0xFF;   // Faster way of getting green(argb)
     int b = argb & 0xFF; 
-   
-   foto.pixels [i]=color (b, r, g, a);
+    foto.pixels [i]=color (b, r, g, a);
 
    /*
    foto.pixels [i]=r 
@@ -378,14 +414,12 @@ void blueredgreen (){
    */
   }
   foto.updatePixels ();
-  camReady=true;
-  image (foto,width/2, height/2);
-  redraw ();
+
 }
+
+
 void greenbluered(){
-  foto= cam.get ();
   int pcount=foto.height*foto.width;
-  camReady=false;
   foto.loadPixels ();
   for (int i=0; i<pcount; i++){
     color argb= foto.pixels [i];
@@ -403,13 +437,85 @@ void greenbluered(){
    */
   }
   foto.updatePixels ();
-  camReady=true;
-  image (foto,width/2, height/2);
-  redraw ();
 }
+
+
+void morered(){
+  int pcount=foto.height*foto.width;
+  foto.loadPixels ();
+  for (int i=0; i<pcount; i++){
+    color argb= foto.pixels [i];
+   // int a = (argb >> 24) & 0xFF;
+   // int r = (argb >> 16) & 0xFF;  // Faster way of getting red(argb)
+    // int g = (argb >> 8) & 0xFF;   // Faster way of getting green(argb)
+    // int b = argb & 0xFF; 
+   // multiply red by 2
+   foto.pixels[i]=
+     (argb & 0xFF00FFFF) |
+     (((argb& 0xFF0000)<<2)
+        & 0xFF0000) |
+        ((argb & 0x400000)<<1) |
+       (argb & 0x800000) ;
+   
+  }
+  foto.updatePixels ();
+}
+
+// void plaincolors(){
+//  int pcount=foto.height*foto.width;
+//  foto.loadPixels ();
+//  for (int i=0; i<pcount; i++){
+//    color argb= foto.pixels [i];
+//    
+//   // multiply all colors by 2,
+//   // keep values if bigger
+//   foto.pixels[i]=
+//     (argb & 0xFF000000) |
+//     (((argb & 0x5F0000)<<2)
+//        & 0xFF0000) |
+//        ((argb & 0x400000)<<1) |
+//        (argb & 0x800000)
+//      |
+//     (((argb & 0x5F00)<<2)
+//        & 0xFF00) |
+//        ((argb & 0x4000)<<1) |
+//        (argb & 0x8000)
+//      |
+//     (((argb & 0x5F)<<2)
+//        & 0xFF) |
+//        ((argb & 0x40)<<1) |
+//        (argb & 0x80);
+//   
+//  }
+//  foto.updatePixels ();
+//}
+
+void plaincolors(){
+  int pcount=foto.height*foto.width;
+  foto.loadPixels ();
+  for (int i=0; i<pcount; i++){
+    color argb= foto.pixels [i];
+
+   int argb2=0;
+   int msk=0xFF0000;
+   for (int bt=0; bt<3; bt+=1 ){
+     msk=msk>>8;
+     
+       argb2|= (
+        ((
+            (
+             ( argb & msk) >> 4
+            ) & msk
+            )<<4)
+           & msk);
+   }
+   foto.pixels[i]=(argb&0xFF000000) | argb2;
+     
+   
+  }
+  foto.updatePixels ();
+}
+
 void nofilter (){
-  foto= cam.get ();
-  camReady=true;
-  image (foto,width/2, height/2);
-  redraw ();
+  /* do nothing */
 }
