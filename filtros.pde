@@ -1,17 +1,27 @@
 int filtro=8;
 int prevfiltro=0;
 int numfiltros=9;
-String cfiltro[]={
-   "Rojo×Azul",
-   "Rojo×Verde", 
-   "Azul×Verde",
-   "RojVerAz->AzRojVer",
-   "RojVerAz->VerAzRoj",
-   "RojoBrilla",
-   "DobleRojo",
-   "ColorPlano",
-   "Natural"
+String[] cfiltro[]={
+   {"Rojo×Azul","Red⇄Blue"},
+   {"Rojo×Verde","Red⇄Green"}, 
+   {"Azul×Verde","Blue⇄Green"},
+   {"RojVerAz⇄AzRojVer",
+   "RedGreBlu⇄BluRedGre"
+   },
+   {
+   "RojVerAz⇄VerAzRoj",
+   "RedGreBlu⇄BluRedGre"
+   },
+   {"RojoBrilla","RedGlows"},
+   {"DobleRojo","DoubleRed"},
+   {"ColorPlano","PlainColor"},
+   {"Natural","Natural"},
    };
+   
+String[] languages[]={
+  {"es","0"},
+  {"en","1"}
+  };
 
 void applyFilters(){
   //if (camReady) {

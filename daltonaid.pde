@@ -4,9 +4,20 @@
  */
 
 import ketai.camera.*;
+import android.content.res.Resources;
+import android.os.Build;
+import java.util.Locale;
+String camoffstr[]={
+"Clic en imagen para iniciar cámara",
+"Touch image to start camera"};
+String camonstr[]={
+  "Clic en imagen para detener cámara",
+  "Touch image to stop camera"
+};
+
 
 KetaiCamera cam;
-
+int lang=1; /*default language*/
 PImage foto;
 boolean camReady;
 PFont tipografia;
@@ -14,6 +25,8 @@ int fontHeight;
 PImage splashScreen;
 boolean splash;
 float splashend;
+
+Locale locale; 
    
 void setup() {
   orientation(LANDSCAPE);
@@ -37,6 +50,23 @@ void setup() {
   */
   splash=true;
   splashend=millis() + 5000;
+  
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+   { 
+     locale = Resources.getSystem().getConfiguration().getLocales().get(0);
+   } else { 
+        //noinspection deprecation
+        locale = Resources.getSystem().getConfiguration().locale;
+   }
+   println (locale.getLanguage());
+   
+   for (int f=0; f<languages.length; f++){
+     if ( languages[f][0]==locale.getLanguage()){
+       lang=int(languages[f][1]);
+       break;
+     }
+   }
+ ;
 }
 
 void draw (){
@@ -99,18 +129,21 @@ void drawUI(){
   
   fill (255);
   if (! cam.isStarted){
-   text("Clic en imagen para iniciar cámara" , width/2, fontHeight);
+   text(camoffstr[lang] , width/2, fontHeight);
+   //text(locale.getLanguage() , width/2, fontHeight);
   } else {
-   text("Clic en imagen para detener cámara" , width/2, fontHeight);
+   text(camonstr[lang] , width/2, fontHeight);
   }
   fill(180);
   textAlign(LEFT);
-  text (cfiltro[(filtro+numfiltros-1)%numfiltros], 5,height- (fontHeight+4)/2);
+  text (cfiltro[(filtro+numfiltros-1)%numfiltros][lang]
+  , 5,height- (fontHeight+4)/2);
   textAlign(RIGHT);
-  text (cfiltro[(filtro+1)%numfiltros], width-5,height- (fontHeight+4)/2);
+  text (cfiltro[(filtro+1)%numfiltros][lang]
+  , width-5,height- (fontHeight+4)/2);
   textAlign(CENTER);
   fill(255);
-  text (cfiltro[filtro], width/2,height- (fontHeight+4)/2);
+  text (cfiltro[filtro][lang], width/2,height- (fontHeight+4)/2);
   
 }
 
