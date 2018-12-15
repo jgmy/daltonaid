@@ -7,10 +7,10 @@ A tool to aid colorblind people distinguish between red and black.
 You can compile this project using android mode of processing, or APDE.
 
 ### Prerequisites
-Daltonaid runs on Android OS Older versions run on Kitkat, current works on Oreo.
-Processing: http://processing.org
-    Alternatively, you can use APDE from https://github.com/Calsign/APDE/wiki or google play. 
-Ketai library: http://ketai.org/
+Daltonaid runs on Android OS. Older versions run on Kitkat, current works on Oreo.
+ * Processing: http://processing.org along with processing Android Mode.
+ * Alternatively, you can use APDE from https://github.com/Calsign/APDE/wiki or google play. 
+ * Ketai library: http://ketai.org/
 
 ### Installing
 You can compile this app with the android mode of the Processing language, or from APDE. 
