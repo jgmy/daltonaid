@@ -139,8 +139,7 @@ void drawUI(){
   text (cfiltro[(filtro+numfiltros-1)%numfiltros][lang]
   , 5,height- (fontHeight+4)/2);
   textAlign(RIGHT);
-  text (cfiltro[(filtro+1)%numfiltros][lang]
-  , width-5,height- (fontHeight+4)/2);
+  text (cfiltro[(filtro+1)%numfiltros][lang] , width-5,height- (fontHeight+4)/2);
   textAlign(CENTER);
   fill(255);
   text (cfiltro[filtro][lang], width/2,height- (fontHeight+4)/2);
