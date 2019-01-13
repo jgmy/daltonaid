@@ -5,16 +5,20 @@ A tool to aid colorblind people distinguish between red and black.
 ## Getting Started
 
 You can compile this project using android mode of processing, or APDE.
+A gradle project file is included, also.
+Take into consideration that you might need deleting /daltonaid/AndroidManifest.xml if you are using APDE. This will produce an APK that requires autofocus capabilities (APDE can't insert the "uses-feature" required to mark autofocus as optional).
 
 ### Prerequisites
 Daltonaid runs on Android OS. Older versions run on Kitkat, current works on Oreo.
  * Processing: http://processing.org along with processing Android Mode.
  * Alternatively, you can use APDE from https://github.com/Calsign/APDE/wiki or google play. 
+ * In case you use Android Studio or Gradle, a static processing.jar library is included.
  * Ketai library: http://ketai.org/
+ * In case you use Android Studio or Gradle, a static ketai.jar library is included.
 
 ### Installing
 You can compile this app with the android mode of the Processing language, or from APDE. 
-Personally, I've used APDE.
+Personally, I used APDE.
 
 #### Building on APDE:
  * Download APDE from Google Play on your android phone.
@@ -31,7 +35,7 @@ Point to the world, activate camera, select a filter and enjoy. I find specially
 
 ## Running the tests
 
-This app can build its own icons. You can do so by uncommenting the createIcon lines at the end of setup(). You'd probably need changing Sketch permissions on Sketch Properties in order to give write access to your external storage. Access to external Storage is needed for saving icons only.
+This app can build its own icons. You can do so by uncommenting the createIcon lines at the end of setup(). You'd probably need changing Sketch permissions on Sketch Properties and/or AndroidManifest.xml in order to give write access to your external storage. Access to external Storage is needed for saving icons only.
 
 ## Built With
 
