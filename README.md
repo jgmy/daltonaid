@@ -33,6 +33,8 @@ Personally, I used APDE.
 ## Using
 Point to the world, activate camera, select a filter and enjoy. I find specially useful the "red to blue" filter to catch up red corrections from black text.
 
+Please take into consideration that, despite of using the autofocus feature of android camera (where available), this app produces somehow blurry images. When too blurry, you might be unable to see the difference between black an red with a single filter. In these situations, I use to move back and forth between filters and see what parts of the image change.
+
 ## Running the tests
 
 This app can build its own icons. You can do so by uncommenting the createIcon lines at the end of setup(). You'd probably need changing Sketch permissions on Sketch Properties and/or AndroidManifest.xml in order to give write access to your external storage. Access to external Storage is needed for saving icons only.
@@ -52,7 +54,7 @@ See also the list of [contributors](https://github.com/jgmy/daltonaid/contributo
 
 ## License
 
-This project is licensed under the GNU Free Software License
+This project is licensed under the GNU Free Software License. Sources can be acquired from github.
 
 ## Acknowledgments
 
