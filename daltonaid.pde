@@ -29,8 +29,9 @@ float splashend;
 Locale locale; 
    
 void setup() {
+ 
   orientation(LANDSCAPE);
-  fullScreen();
+  
   frameRate  (25);
   //splashScreen=loadImage ("Daltonaid_splash_2650x1600.jpg");
   cam = new KetaiCamera(this,min(width,1024),min(height,768), 24);

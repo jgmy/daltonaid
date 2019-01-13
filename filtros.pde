@@ -1,6 +1,6 @@
-int filtro=8;
+int filtro=9;
 int prevfiltro=0;
-int numfiltros=9;
+int numfiltros=10;
 String[] cfiltro[]={
    {"Rojo×Azul","Red⇄Blue"},
    {"Rojo×Verde","Red⇄Green"}, 
@@ -15,6 +15,7 @@ String[] cfiltro[]={
    {"RojoBrilla","RedGlows"},
    {"DobleRojo","DoubleRed"},
    {"ColorPlano","PlainColor"},
+   {"RojoParpadea","RedBlinks"},
    {"Natural","Natural"},
    };
    
@@ -45,7 +46,9 @@ void applyFilters(){
      break;
     case 7: plaincolors();
      break;
-    case 8: 
+     case 8: redblink();
+     break;
+    case 9: 
     default:
        nofilter ();
    }
@@ -87,6 +90,29 @@ void redtoblue (){
   }
   foto.updatePixels ();
   
+}
+void redblink(){
+  int pcount=foto.height*foto.width;
+  if (((frameCount/2) % 2)==0){
+    return;
+  }
+  foto.loadPixels ();
+  for (int i=0; i<pcount; i++){
+    color argb= foto.pixels [i];
+    
+    int a = (argb >> 24) & 0xFF;
+    int r = (argb >> 16) & 0xFF;  // Faster way of getting red(argb)
+    int g = (argb >> 8) & 0xFF;   // Faster way of getting green(argb)
+    int b = argb & 0xFF; 
+    if (r> 128){
+      r=min(255,int(float(r)*1.5));
+
+      foto.pixels [i]=r<<16
+        | (g <<8) 
+        | (b ) |0xFF000000;
+    }
+  }
+  foto.updatePixels ();
 }
 void redbrightold (){
   int pcount=foto.height*foto.width;
